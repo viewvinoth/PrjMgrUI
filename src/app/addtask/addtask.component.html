@@ -1,0 +1,138 @@
+<div class="container" style="margin-top:30px">
+  <form name="add task" [formGroup]="addTaskForm" (ngSubmit)="onSubmit()">
+      <div *ngIf="validationerrorflag" class="alert alert-danger">
+          {{validationErrorMsg}}
+      </div>    
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Project</span>
+      </div>
+      <input type="text" class="form-control" id="project" formControlName="project" [(ngModel)]="projectName" disabled
+        required>
+      <div class="input-group-append">
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#projectModal"
+          (click)="triggerProjectModel()">Search</button>
+      </div>
+    </div>
+    <div>
+      <label for="task">Task:</label>
+      <input type="text" class="form-control" id="task" formControlName="task">
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" id="iParentTaskChkBx" formControlName="iParentTaskChkBx"
+          (click)="altParentTaskFields()">&nbsp;&nbsp;&nbsp;Parent Task
+      </label>
+    </div>
+    <div>
+      <label for="priority">Priority:</label>
+      <input type="range" class="form-control" min="0" max="30" step="1" id="priority" formControlName="priority"
+        required>
+    </div>
+    <br>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Parent Task</span>
+      </div>
+      <input type="text" class="form-control" id="parenttask" formControlName="parenttask" [(ngModel)]="parenttaskName"
+        disabled required>
+      <div class="input-group-append">
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#projectModal"
+          (click)="triggerParentTaskModel()">Search</button>
+      </div>
+    </div>
+    <div>
+      <label for="startdate">Start Date:</label>
+      <input type="date" class="form-control" id="startdate" formControlName="startdate">
+    </div>
+    <div>
+      <label for="enddate">End Date:</label>
+      <input type="date" class="form-control" id="enddate" formControlName="enddate">
+    </div>
+    <br>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">User</span>
+      </div>
+      <input type="text" class="form-control" id="user" formControlName="user" [(ngModel)]="userName" disabled required>
+      <div class="input-group-append">
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#projectModal"
+          (click)="triggerUserModal()">Search</button>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-sm-6" style="left:0">
+        <button type="submit" class="btn btn-primary btn-block" id="btn-add-task">Add Task</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-primary btn-block" id="btn-reset" (click)="reset()">Reset</button>
+      </div>
+    </div>
+  </form>
+  <!-- The Project Modal -->
+  <div class="modal" id="projectModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 *ngIf="projectFlag" class="modal-title">Search for a project for this task</h5>
+          <h5 *ngIf="parenttaskFlag" class="modal-title">Search for a parent Task for this task</h5>
+          <h5 *ngIf="userFlag" class="modal-title">Search for a User for this task</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container mt-3">
+            <div class="row">
+              <label for="searchStr">Search:</label>
+              <input type="text" [(ngModel)]="searchStr" placeholder="start typing...">
+            </div>
+            <hr style="border-top: dotted 1px;" />
+            <div *ngIf="projectFlag">
+              <div *ngFor="let p of projects | filterProject:searchStr" class="row">
+                <div class="col col-sm-10">
+                  <span>{{p.project}}</span>
+                </div>
+                <div class="col col-sm-2">
+                  <button class="btn btn-success btn-sm" length="40" (click)="selectProject(p)">select</button>
+                </div>
+                <hr style="border-top: dotted 1px;" />
+              </div>
+            </div>
+            <div *ngIf="userFlag">
+              <div *ngFor=" let u of users | filterUserByLastAndFirstName:searchStr" class="row">
+                <div class="col col-sm-10">
+                  <span>{{u.firstName + "," + u.lastName}}</span>
+                </div>
+                <div class="col col-sm-2">
+                  <button class="btn btn-success btn-sm" length="40" (click)="selectUser(u)">select</button>
+                </div>
+                <hr style="border-top: dotted 1px;" />
+              </div>
+            </div>
+            <div *ngIf="parenttaskFlag">
+              <h4>printing fine</h4>
+              <div *ngFor=" let pt of parenttasks" class="row">
+                <div class="col col-sm-10">
+                  <span>{{pt.parent_task}}</span>
+                </div>
+                <div class="col col-sm-2">
+                  <button class="btn btn-success btn-sm" length="40" (click)="selectParentTask(pt)">select</button>
+                </div>
+                <hr style="border-top: dotted 1px;" />
+              </div>
+            </div>
+          </div>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <label *ngIf="projectFlag">{{projectSelectionStr}}</label>
+            <label *ngIf="parenttaskFlag">{{parenttaskSelectionStr}}</label>
+            <label *ngIf="userFlag">{{userSelectionStr}}</label>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>

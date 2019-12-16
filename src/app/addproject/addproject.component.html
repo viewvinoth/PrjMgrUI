@@ -1,0 +1,152 @@
+<div class="container" style="margin-top:30px">
+  <form name="add user" [formGroup]="addProjectForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="validationerrorflag" class="alert alert-danger">
+      {{validationErrorMsg}}
+    </div>
+    <div>
+      <label for="iProject">Project:</label>
+      <input type="text" class="form-control" id="iProject" formControlName="iProject" required>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" id ="iDatesChkBx" formControlName="iDatesChkBx" (click)="populateDates()">&nbsp;&nbsp;&nbsp;Set Start Date and End Date
+      </label>
+    </div>
+    <div>
+      <label for="iStartDate">Start Date:</label>
+      <input type="date" class="form-control" id="iStartDate" formControlName="iStartDate">
+    </div>
+    <div>
+      <label for="iEndDate">End Date:</label>
+      <input type="date" class="form-control" id="iEndDate" formControlName="iEndDate">
+    </div>
+    <div>
+      <label for="iPriority">Priority:</label>
+      <input type="range" class="form-control" min="0" max="30" step="1" id="iPriority" formControlName="iPriority"
+        required>
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Manager</span>
+      </div>
+      <input type="text" class="form-control" id="iManager" formControlName="iManager" [(ngModel)]="managerFullName" disabled required>
+      <div class="input-group-append">
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#myModal">Search</button>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-sm-6" style="left:0">
+        <button *ngIf="addflag" type="submit" class="btn btn-primary btn-block" id="btn-add-task">Add</button>
+        <button *ngIf="!addflag" type="submit" class="btn btn-primary btn-block" id="btn-add-task">Update</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-primary btn-block" id="btn-reset" (click)="reset()">Reset</button>
+      </div>
+    </div>
+  </form>
+  <hr style="border-top: solid 1px;" />
+  <div class="row">
+    <div class="col-sm-3">
+      <label>Search:</label>&nbsp;&nbsp;
+      <input type="text" [(ngModel)]="searchStr">
+    </div>
+    <div class="col-sm-1 justify-content-left align-self-left">
+      <label>Sort By:</label>
+    </div>
+    <div class="col-sm-2">
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByStartDate()">Start Date</button>
+    </div>
+    <div class="col-sm-2">
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByEndDate()">End Date</button>
+    </div>
+    <div class="col-sm-2">
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByPriority()">Priority</button>
+    </div>
+    <div class="col-sm-2">
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByCompleted()">Completed</button>
+    </div>
+  </div>
+  <hr style="border-top: dotted 1px;" />
+  <div *ngFor="let p of projects | filterProject:searchStr">
+    <div class="row">
+      <div class="col-sm-3">
+        <label for="project">Project:</label>
+        <h6 id="project">{{p.project}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <label for="noofTasks">No of Tasks:</label>
+        <h6 id="noofTasks">{{p.noOfTasks}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <label for="startDate">Start Date:</label>
+        <h6 id="startDate">{{p.startDate}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-secondary btn-block" (click)='switchToUpdate(p)'>Update
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <label for="priority">Priority:</label>
+        <h6 id="priority">{{p.priority}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <label for="noOfCompletedTasks">Completed:</label>
+        <h6 id="noOfCompletedTasks">{{p.noOfCompletedTasks}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <label for="endDate">End Date:</label>
+        <h6 id="endDate">{{p.endDate}}</h6>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-secondary btn-block" (click)='suspend()'>Suspend
+        </button>
+      </div>
+    </div>
+    <hr style="border-top: dotted 1px;" />
+  </div>
+
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Select a Manager to this project!</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container mt-3">
+            <div class="row">
+              <label for="searchUser">Search:</label>
+              <input type="text" [(ngModel)]="searchUser" placeholder="start typing...">
+            </div>
+            <hr style="border-top: dotted 1px;" />
+            <div>
+              <div *ngFor="let u of users | filterUserByLastAndFirstName:searchUser" class="row">
+                <div class="col col-sm-10">
+                  <span>{{u.firstName + "," + u.lastName}}</span>
+                </div>
+                <div class="col col-sm-2">
+                  <button class="btn btn-success btn-sm" length="40" (click)="selectManager(u)">select</button>
+                </div>
+                <hr style="border-top: dotted 1px;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <label>{{managerSelectionStr}}</label>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

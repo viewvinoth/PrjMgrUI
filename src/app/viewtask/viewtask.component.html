@@ -1,0 +1,104 @@
+<div class="container" style="margin-top:30px">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Project</span>
+    </div>
+    <input type="text" class = "form-control" id="project" [(ngModel)]="projectName" disabled required>
+    <div class="input-group-append">
+      <button class="btn btn-success" type="button" data-toggle="modal" data-target="#projectModal">Search</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <label>Sort By:</label>
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByStartDate()">Start
+        Date</button>
+    </div>
+    <div class="col-sm-3">
+      <label>&nbsp;</label>
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByEndDate()">End Date</button>
+    </div>
+    <div class="col-sm-3">
+      <label>&nbsp;</label>
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByPriority()">Priority</button>
+    </div>
+    <div class="col-sm-3">
+      <label>&nbsp;</label>
+      <button type="button" class="btn btn-block btn-outline-success" (click)="sortByCompleted()">Completed</button>
+    </div>
+  </div>
+  <hr style="border-top: dotted 1px;" />
+  <div *ngFor="let t of tasks">
+    <div class="row">
+      <div class="col-sm-2">
+        <label for="task">Task</label>
+        <h6 id="task">{{t.task}}</h6>
+      </div>
+      <div class="col-sm-2">
+        <label for="parenttask">Parent Task</label>
+        <h6 id="parenttask">{{t.parenttask}}</h6>
+      </div>
+      <div class="col-sm-1">
+        <label for="priority">Priority</label>
+        <h6 id="priority">{{t.priority}}</h6>
+      </div>
+      <div class="col-sm-2">
+        <label for="startdate">Start</label>
+        <h6 id="startdate">{{t.start_date}}</h6>
+      </div>
+      <div class="col-sm-2">
+        <label for="enddate">End</label>
+        <h6 id="enddate">{{t.end_date}}</h6>
+      </div>
+      <div class="col-sm-3 text-center justify-content-center align-self-center">
+        <button *ngIf="t.endDate" type="button" class="btn btn-secondary" disabled>Edit Task</button>
+        <button *ngIf="!t.endDate" type="button" class="btn btn-secondary" (click)='updateTask(t)'>Edit
+          Task</button>&nbsp;
+        <button *ngIf="t.endDate" type="button" class="btn btn-secondary disabled">End Task</button>
+        <button *ngIf="!t.endDate" type="button" class="btn btn-secondary" (click)="endTask(t)">End
+          Task</button>
+      </div>
+    </div>
+    <hr style="border-top: dotted 1px;" />
+  </div>
+
+
+  <div class="modal" id="projectModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Search for a project!</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container mt-3">
+            <div class="row">
+              <label for="searchStr">Search:</label>
+              <input type="text" [(ngModel)]="searchStr" placeholder="start typing...">
+            </div>
+            <hr style="border-top: dotted 1px;" />
+            <div>
+              <div *ngFor="let p of projects | filterProject:searchStr" class="row">
+                <div class="col col-sm-10">
+                  <span>{{p.project}}</span>
+                </div>
+                <div class="col col-sm-2">
+                  <button class="btn btn-success btn-sm" length="40" (click)="selectProject(p)">select</button>
+                </div>
+                <hr style="border-top: dotted 1px;" />
+              </div>
+            </div>
+          </div>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <label>{{projectSelectionString}}</label>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
